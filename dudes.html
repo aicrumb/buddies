@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+	   body {
+	     background-color: #101011;
+	     font-family: Arial, Helvetica, sans-serif
+
+	   }
+	   h1 {
+	     color: white
+	   }
+	   p {
+	     color: white
+	   }
+	   canvas {
+	   
+	   padding-left: 0;
+	   padding-right: 0;
+	   margin-left: auto;
+	   margin-right: auto;
+	   display: block;
+	   width: 512px;
+	   /* border:1px solid black; */
+	}
+	</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>yo!</title>
+</head>
+<body>
+	<div id='canvas-container'>
+		<center>
+			<h1>dudes</h1>
+			<!-- <p>slime mold (?)</p> -->
+			<canvas id='canvas'></canvas>
+		</center>
+	</div>
+<script>
+canvas = document.getElementById("canvas");
+canvas.width = 800;
+canvas.height = 800;
+document.body.appendChild(canvas);
+var ctx = canvas.getContext('2d');
+
+/* rudimentary particle system, particles should attract to one another (gravity) but also not overlap (push away at close distances), they have both an angle and a velocity that may be no more than 1 */
+var particles = [];
+var particleCount = 300;
+var particleRadius = 8;
+var particleMass = 1;
+var particleGravity = 0.1;
+var particleVelocity = 0.1;
+var particleAngle = Math.PI / 2;
+var particleColor = '#aaaaaa';
+for (var i = 0; i < particleCount; i++) {
+  var particle = {
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: Math.random() * particleVelocity - particleVelocity / 2,
+    vy: Math.random() * particleVelocity - particleVelocity / 2,
+    ax: 0,
+    ay: 0,
+    color: '#' + Math.floor(Math.random() * 255).toString(16).repeat(2)
+  };
+  particles.push(particle);
+}
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (var i = 0; i < particles.length; i++) {
+    var particle = particles[i];
+    ctx.fillStyle = particle.color;
+    ctx.beginPath();
+    ctx.arc(particle.x, particle.y, particleRadius, 0, Math.PI * 2, false);
+    ctx.fill();
+  }
+  for (var i = 0; i < particles.length; i++) {
+    var particle = particles[i];
+    for (var j = i + 1; j < particles.length; j++) {
+      var otherParticle = particles[j];
+      var dx = otherParticle.x - particle.x;
+      var dy = otherParticle.y - particle.y;
+      var distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < particleRadius * 2) {
+        var angle = Math.atan2(dy, dx);
+        var force = 3
+        particle.ax += force * Math.cos(angle);
+        particle.ay += force * Math.sin(angle);
+        otherParticle.ax -= force * Math.cos(angle);
+        otherParticle.ay -= force * Math.sin(angle);
+      }
+    }
+  }
+  for (var i = 0; i < particles.length; i++) {
+    var particle = particles[i];
+    particle.vx += particle.ax;
+    particle.vy += particle.ay;
+    particle.x += particle.vx;
+    particle.y += particle.vy;
+    particle.ax = 0;
+    particle.ay = 0;
+  }
+}
+/* make sure particles wrap around */
+function wrap(particle) {
+  if (particle.x < 0) {
+    particle.x = canvas.width;
+  }
+  if (particle.x > canvas.width) {
+    particle.x = 0;
+  }
+  if (particle.y < 0) {
+    particle.y = canvas.height;
+  }
+  if (particle.y > canvas.height) {
+    particle.y = 0;
+  }
+}
+
+/* make sure velocity never exceeds 5 */
+function limit(particle) {
+  if (particle.vx > 5) {
+    particle.vx = 5;
+  }
+  if (particle.vx < -5) {
+    particle.vx = -5;
+  }
+  if (particle.vy > 5) {
+    particle.vy = 5;
+  }
+  if (particle.vy < -5) {
+    particle.vy = -5;
+  }
+}
+
+/* animate, wrap and limit */
+function animate() {
+  draw();
+  for (var i = 0; i < particles.length; i++) {
+    var particle = particles[i];
+    wrap(particle);
+    limit(particle);
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
