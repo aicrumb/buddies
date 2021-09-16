@@ -24,7 +24,7 @@
 	   /* border:1px solid black; */
 	}
 	</style>
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>yo!</title>
 </head>
 <body>
@@ -35,82 +35,86 @@
 			<canvas id='canvas'></canvas>
 		</center>
 	</div>
-	<script>
-	var canvas = document.getElementById('canvas');
-	canvas.width = 400;
-	canvas.height = 400;
-	document.body.appendChild(canvas);
-	var ctx = canvas.getContext('2d');
+<script>
+canvas = document.getElementById("canvas");
+canvas.width = 400;
+canvas.height = 400;
+document.body.appendChild(canvas);
+var ctx = canvas.getContext('2d');
 
-	var particles = [];
-	var particleCount = 130;
-	var particleRadius = 9;
-	var particleGravity = 0.1;
-	var particleSpeed = 1.;
-	var particleFriction = 0.9;
-	var particleWrap = true;
-	var particleWrapWidth = canvas.width;
-	var particleWrapHeight = canvas.height;
-	for (var i = 0; i < particleCount; i++) {
-	 var particle = {
-	   x: Math.random() * canvas.width,
-	   y: Math.random() * canvas.height,
-	   vx: Math.random() * particleSpeed - particleSpeed / 2,
-	   vy: Math.random() * particleSpeed - particleSpeed / 2,
-	   r: particleRadius,
-	   color: '#' + Math.floor(Math.random() * 16777215).toString(16)
-	 };
-	 particles.push(particle);
-	}
-	function draw() {
-	 ctx.clearRect(0, 0, canvas.width, canvas.height);
-	 for (var i = 0; i < particles.length; i++) {
-	   var particle = particles[i];
-	   ctx.fillStyle = particle.color;
-	   ctx.beginPath();
-	   ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2, false);
-	   ctx.fill();
-	 }
-	 for (var i = 0; i < particles.length; i++) {
-	   var particle = particles[i];
-	   for (var j = 0; j < particles.length; j++) {
-	     var otherParticle = particles[j];
-	     if (particle !== otherParticle) {
-	       var dx = particle.x - otherParticle.x;
-	       var dy = particle.y - otherParticle.y;
-	       var distance = Math.sqrt(dx * dx + dy * dy);
-	       if (distance < particle.r * 2) {
-	         var angle = Math.atan2(dy, dx);
-	         var targetX = particle.x + Math.cos(angle) * (particle.r * 2 - distance);
-	         var targetY = particle.y + Math.sin(angle) * (particle.r * 2 - distance);
-	         var ax = (targetX - otherParticle.x) * particleGravity;
-	         var ay = (targetY - otherParticle.y) * particleGravity;
-	         otherParticle.vx += ax;
-	         otherParticle.vy += ay;
-	       }
-	     }
-	   }
-	   if (particleWrap) {
-	     if (particle.x < 0) {
-	       particle.x += particleWrapWidth;
-	     }
-	     if (particle.x > particleWrapWidth) {
-	       particle.x -= particleWrapWidth;
-	     }
-	     if (particle.y < 0) {
-	       particle.y += particleWrapHeight;
-	     }
-	     if (particle.y > particleWrapHeight) {
-	       particle.y -= particleWrapHeight;
-	     }
-	   }
-	   particle.vx *= particleFriction;
-	   particle.vy *= particleFriction;
-	   particle.x += particle.vx;
-	   particle.y += particle.vy;
-	 }
-	}
-	setInterval(draw, 1000 / 60);
-	</script>
+/* create a simple particle system where the particles have their own gravitational pull and are attracted to one another and wrap around the sides, drawn as circles on the canvas, they stick to eachother and occasionally are pushed apart */
+var particles = [];
+var particleCount = 100;
+var particleRadius = 10;
+var particleGravity = 0.1;
+var particleSpeed = 1;
+var particleFriction = 0.9;
+var particleWrap = true;
+var particleWrapWidth = canvas.width;
+var particleWrapHeight = canvas.height;
+for (var i = 0; i < particleCount; i++) {
+  var particle = {
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: Math.random() * particleSpeed - particleSpeed / 2,
+    vy: Math.random() * particleSpeed - particleSpeed / 2,
+    r: particleRadius,
+    color: '#' + Math.floor(Math.random() * 16777215).toString(16)
+  };
+  particles.push(particle);
+}
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (var i = 0; i < particles.length; i++) {
+    var particle = particles[i];
+    ctx.fillStyle = particle.color;
+    ctx.beginPath();
+    ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2, false);
+    ctx.fill();
+  }
+  for (var i = 0; i < particles.length; i++) {
+    var particle = particles[i];
+    for (var j = 0; j < particles.length; j++) {
+      var otherParticle = particles[j];
+      if (particle !== otherParticle) {
+        var dx = particle.x - otherParticle.x;
+        var dy = particle.y - otherParticle.y;
+        var distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < particle.r * 2) {
+          var angle = Math.atan2(dy, dx);
+          var targetX = particle.x + Math.cos(angle) * (particle.r * 2 - distance);
+          var targetY = particle.y + Math.sin(angle) * (particle.r * 2 - distance);
+          var ax = (targetX - otherParticle.x) * particleGravity;
+          var ay = (targetY - otherParticle.y) * particleGravity;
+          otherParticle.vx += ax;
+          otherParticle.vy += ay;
+        }
+      }
+    }
+    if (particleWrap) {
+      if (particle.x < 0) {
+        particle.x += particleWrapWidth;
+      }
+      if (particle.x > particleWrapWidth) {
+        particle.x -= particleWrapWidth;
+      }
+      if (particle.y < 0) {
+        particle.y += particleWrapHeight;
+      }
+      if (particle.y > particleWrapHeight) {
+        particle.y -= particleWrapHeight;
+      }
+    }
+    particle.vx *= particleFriction;
+    particle.vy *= particleFriction;
+    particle.x += particle.vx;
+    particle.y += particle.vy;
+  }
+}
+
+setInterval(function () {
+  draw();
+}, 1000 / 60);
+</script>
 </body>
 </html>
