@@ -37,14 +37,14 @@
 	</div>
 <script>
 canvas = document.getElementById("canvas");
-canvas.width = 400;
-canvas.height = 400;
+canvas.width = 1000;
+canvas.height = 1000;
 document.body.appendChild(canvas);
 var ctx = canvas.getContext('2d');
 
 /* create a simple particle system where the particles have their own gravitational pull and are attracted to one another and wrap around the sides, drawn as circles on the canvas, they stick to eachother and occasionally are pushed apart */
 var particles = [];
-var particleCount = 100;
+var particleCount = 500;
 var particleRadius = 10;
 var particleGravity = 0.1;
 var particleSpeed = 1;
@@ -52,10 +52,11 @@ var particleFriction = 0.9;
 var particleWrap = true;
 var particleWrapWidth = canvas.width;
 var particleWrapHeight = canvas.height;
+var center = true;
 for (var i = 0; i < particleCount; i++) {
   var particle = {
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
+    x:((center) ? canvas.width/2 + Math.random()*10-5 : Math.random() * canvas.width),
+    y:((center) ? canvas.height/2 + Math.random()*10-5 : Math.random() * canvas.height),
     vx: Math.random() * particleSpeed - particleSpeed / 2,
     vy: Math.random() * particleSpeed - particleSpeed / 2,
     r: particleRadius,
